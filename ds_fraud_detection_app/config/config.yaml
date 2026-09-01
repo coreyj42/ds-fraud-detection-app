@@ -1,0 +1,137 @@
+data:
+  database: ds_features_fraud
+  features_table: fraud_training_features
+  target_column: is_fraud
+  output_table: predictions
+  output_dataset: ds_predictions_fraud
+  cutoff_year: 2023
+
+features:
+  outlier_removal_features:
+  - total_nights
+  - num_days_booking_creation_to_pickup
+  - customer_age_at_booking_creation
+  - total_traffic_sessions
+  - traffic_sessions_view_item_list_count
+  - traffic_sessions_begin_checkout_count
+  - traffic_sessions_total_page_views
+  - traffic_sessions_total_engagement_time_msec
+
+  categorical_features:
+  - residence_country
+  - communication_language
+
+  binary_features:
+  - is_promotion_used
+  - is_customer_details_changed_3_days_before_pickup
+  - is_non_card_payment_method_used
+  - is_online_bank_used
+  - is_residence_bank_country_matched
+  - is_residence_traffic_sessions_country_matched
+
+  numeric_features:
+  - total_nights
+  - num_days_booking_creation_to_pickup
+  - customer_age_at_booking_creation
+  - total_traffic_sessions
+  - traffic_sessions_begin_checkout_count
+  - traffic_sessions_total_page_views
+  - traffic_sessions_total_engagement_time_msec
+  - num_customer_bookings
+  - num_traffic_events_upsell_payments
+  - num_extras_purchased
+  - extras_gross_total_eur
+  - num_drivers
+
+  multi_categorical_features:
+  - traffic_sessions_sub_continents
+  - traffic_sessions_device_categories
+
+payment_methods:
+  online_banks:
+  - n26
+  - revolut
+  - monzo
+  - monese
+  - bunq
+  - wise
+  - lunar
+  - zen
+  - open bank
+  - atom
+  - bnext
+  - holvi
+  - imaginbank
+  - knab
+  - hello bank!
+  - finecobank
+  - vivid money
+  - starling bank
+  - tbi bank
+  - salt bank
+  - zopa bank
+  - qonto
+  - pockit
+  - tomorrow
+  - finom
+  - bankera
+  - buddybank
+  - zilch
+
+  non_card_payment_methods:
+  - paypal
+  - directEbanking
+  - ideal
+  - uatp
+
+model:
+  hyperparameters:
+    n_estimators: 659
+    max_depth: 4
+    learning_rate: 0.01
+    subsample: 1
+    colsample_bytree: 0.4
+    min_child_weight: 1
+    gamma: 0.0
+    reg_alpha: 0.1
+    reg_lambda: 0.0
+
+  feature_selection:
+    top_n_categorical: 25
+    top_n_multi_categorical: 7
+
+thresholds:
+  medium_warning_level_threshold: 0.5
+  high_warning_level_beta: 5
+
+train_cross_val_predictions:
+  database: ds_predictions_fraud
+  table: training_data_cross_valuation_predictions
+
+predictions:
+  booking_metadata:
+    - booking_number
+    - booking_creation_date
+    - pickup_date
+  database: ds_predictions_fraud
+  all_bookings_predictions_table: all_bookings_fraud_predictions
+  warnings_table: fraud_warnings
+
+# databases to check for recent updates
+refresh_check:
+  database: dm_rent
+  table: rent_bookings
+
+# GCP constants
+gcp:
+  base_image_path: europe-west3-docker.pkg.dev/sf-da-dwh/ds-images/ds-classifier-base:latest
+  bucket_name: gs://ds-pipelines-outputs
+  main:
+    model_registry_model: projects/634307141317/locations/europe-west3/models/4395324120313626624
+    display_name: main-fraud-model
+    artifact_name: main_fraud_model
+
+  dev:
+    model_registry_model: projects/634307141317/locations/europe-west3/models/4197587949174390784
+    display_name: dev-fraud-model
+    artifact_name: dev_fraud_model

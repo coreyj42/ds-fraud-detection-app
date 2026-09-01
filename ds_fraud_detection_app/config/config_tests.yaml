@@ -1,0 +1,57 @@
+filter_features:
+  data:
+    target_column: target
+    cutoff_year: 2023
+
+  features:
+    outlier_removal_features:
+    - outlier_test_column
+
+preprocess:
+  data:
+    target_column: target
+
+  features:
+    categorical_features:
+    - categorical
+
+    binary_features:
+    - binary
+
+    numeric_features:
+    - numeric
+
+    multi_categorical_features:
+    - multi_categorical
+    
+  predictions:
+    booking_metadata:
+      - metadata_column
+
+train:
+  data:
+    target_column: target
+
+  features:
+    categorical_features:
+    - categorical
+
+    binary_features:
+    - binary
+
+    numeric_features:
+    - numeric
+
+    multi_categorical_features:
+    - multi_categorical
+
+  model:
+    hyperparameters:
+      n_estimators: 100
+
+    feature_selection:
+      top_n_categorical: 2
+      top_n_multi_categorical: 1
+
+  thresholds:
+    high_warning_level_beta: 5
